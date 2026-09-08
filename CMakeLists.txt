@@ -148,6 +148,7 @@ set(INCLUDE_DIRS
         "${CMAKE_CURRENT_SOURCE_DIR}/common/module/ethercat/soem/osal"
         "${CMAKE_CURRENT_SOURCE_DIR}/common/module/ethercat/soem/oshw"
         "${CMAKE_CURRENT_SOURCE_DIR}/common/module/ethercat/soem/src"
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/module/gpt"
 )
 
 # 对照当前 e2 studio 的 sources.mk 收集源码。添加新模块时同步更新此列表及包含路径。
@@ -167,6 +168,7 @@ set(SOURCE_DIRS
         "${E2STUDIO_DIR}/rzn/aws/FreeRTOS-Kernel"
         "${E2STUDIO_DIR}/rzn/fsp/src/r_ethsw"
         "${E2STUDIO_DIR}/rzn/fsp/src/r_gmac"
+        "${E2STUDIO_DIR}/rzn/fsp/src/r_gpt"
         "${E2STUDIO_DIR}/rzn/fsp/src/r_ether_phy"
         "${E2STUDIO_DIR}/rzn/fsp/src/r_ether_selector"
         "${CMAKE_CURRENT_SOURCE_DIR}/common/module/serial_io"
@@ -175,6 +177,7 @@ set(SOURCE_DIRS
         "${CMAKE_CURRENT_SOURCE_DIR}/common/module/ethercat/soem/osal"
         "${CMAKE_CURRENT_SOURCE_DIR}/common/module/ethercat/soem/oshw"
         "${CMAKE_CURRENT_SOURCE_DIR}/common/module/ethercat/soem/src"
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/module/gpt"
 )
 
 set(PROJECT_SOURCES "${E2STUDIO_DIR}/rzn/aws/FreeRTOS-Kernel/portable/MemMang/heap_4.c")
