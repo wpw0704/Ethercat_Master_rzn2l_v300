@@ -5,20 +5,23 @@
  **********************************************************************************************************************/
 #include "r_gmac.h"
 #include "r_ether_phy.h"
-
+#include "main_thread.h"
+#include "um_common.h"
+#include <string.h>
+#include "ethercat_master.h"
 FSP_HEADER
 
 /**********************************************************************************************************************
  * Macro definitions
  **********************************************************************************************************************/
 /* 监控的物理网口：0=ETH0，1=ETH1，2=ETH2；时间单位为毫秒。 */
-#define ETH_MONITOR_PORT          (0U)
+#define ETH_MONITOR_PORT          (1U)
 #define ETH_MONITOR_STABLE_MS     (500U)
 #define ETH_MONITOR_POLL_MS       (10U)
 
 #define ETH_MONITOR_TASK_NAME "eth_monitor_task"
 #define ETH_MONITOR_TASK_STACK_SIZE      (1024)
-#define IO_TASK_PRIORITY        (3)
+#define ETH_MONITOR_TASK_PRIORITY        (3)
 
 /* SOEM 独占的物理网口与监控网口一致，应用层使用 ETH_SOEM_IFNAME 打开。 */
 #define ETH_SOEM_PORT             ETH_MONITOR_PORT
@@ -107,15 +110,15 @@ fsp_err_t eth_send_frame(const uint8_t *p_frame, uint32_t length);
 fsp_err_t eth_receive_frame(uint8_t *p_frame, uint32_t capacity, uint32_t *p_length);
 
 /**
- * @brief 监控 ETH_MONITOR_PORT，连续 READY 超过 ETH_MONITOR_STABLE_MS 后打印日志并挂起自身。
+ * @brief 监控 ETH_MONITOR_PORT，连续 READY 超过 ETH_MONITOR_STABLE_MS 后创建PDO主任务并等待清理通知。
  * @param[in] pvParameters FreeRTOS 任务参数，当前不使用，创建任务时传 NULL。
- * @return 不返回；挂起后即使被恢复，也只会再次挂起，不重复打印。
+ * @return 不返回；收到PDO退出通知后重新识别链路。
  * @note 这里只提供任务入口，不创建任务；应在 eth_init() 成功后创建。
  *       本任务负责链路维护，运行时其他任务不得并发维护链路或调用网口收发接口。
  *       从首次检测到 READY 开始计时，非 READY 或查询错误会清零计时。
- *       按周期采样判断稳定，短于采样间隔的变化可能漏检；挂起后不再维护链路。
+ *       按周期采样判断稳定；交接后由PDO任务维护链路，禁止两任务并发访问驱动。
  */
-void eth_monitor_task_entry(void *pvParameters);
+_Noreturn void eth_monitor_task_entry(void *pvParameters);
 
 FSP_FOOTER
 #endif

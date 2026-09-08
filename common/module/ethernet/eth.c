@@ -1,10 +1,8 @@
+#include <sys/cdefs.h>
 /***********************************************************************************************************************
  * Includes
  **********************************************************************************************************************/
 #include "eth.h"
-#include "main_thread.h"
-#include "um_common.h"
-#include <string.h>
 /***********************************************************************************************************************
 * Private constants
 **********************************************************************************************************************/
@@ -245,10 +243,11 @@ fsp_err_t eth_receive_frame(uint8_t *p_frame, uint32_t capacity, uint32_t *p_len
 }
 
 /* 函数用途、参数及返回值见 eth.h。 */
-void eth_monitor_task_entry(void *pvParameters)
+_Noreturn void eth_monitor_task_entry(void *pvParameters)
 {
     FSP_PARAMETER_NOT_USED(pvParameters);
     bool ready_timing = false;
+    BaseType_t rtos_err; /** Rtos status */
     TickType_t ready_start_tick = 0U;
     fsp_err_t previous_error = FSP_SUCCESS;
     /* 门限向上取整并使用严格大于比较，避免 tick 取整使等待时间不足。 */
@@ -284,12 +283,21 @@ void eth_monitor_task_entry(void *pvParameters)
         else if ((TickType_t) (now - ready_start_tick) > stable_ticks)
         {
             /* 无符号 tick 差值允许计时跨越 tick 回绕；满足条件后只打印一次。 */
-            USR_LOG_INFO("ETH%u READY for more than %u ms; monitor task suspended.",
+            USR_LOG_INFO("ETH%u READY for more than %u ms; handoff to PDO task.",
                          (unsigned int) ETH_MONITOR_PORT, (unsigned int) ETH_MONITOR_STABLE_MS);
-            while (1)
-            {
-                vTaskSuspend(NULL);
+            rtos_err = xTaskCreate(
+                    ethercat_task_entry, ETHERCAT_TASK_NAME,
+                    ETHERCAT_TASK_STACK_SIZE / sizeof(StackType_t),
+                    xTaskGetCurrentTaskHandle(), ETHERCAT_TASK_PRIORITY,
+                    &ethercat_task_handle);
+            if (pdTRUE != rtos_err) {
+                USR_LOG_ERROR("Failed to create ethercat_task task.");
             }
+            else {
+                /* 主任务独占收发和链路维护；完成通知即使先到达也不会丢失。 */
+                (void) ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+            }
+            ready_timing = false; // 断线/初始化失败后重新识别并计满稳定时间
         }
 
         previous_error = err;
