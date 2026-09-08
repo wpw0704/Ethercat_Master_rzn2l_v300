@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Ethercat_Master_rzn2l_v300" type="com.jetbrains.cidr.embedded.customgdbserver.type" factoryName="com.jetbrains.cidr.embedded.customgdbserver.factory" PROGRAM_PARAMS="-select USB -device R9A07G084M04GBG -if SWD -speed 4000 -noir" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Ethercat_Master_rzn2l_v300" TARGET_NAME="Ethercat_Master_rzn2l_v300" CONFIG_NAME="Debug" version="1" RUN_PATH="$PROJECT_DIR$/project/e2studio/Debug/Ethercat_Master_rzn2l_v300.elf">
+    <custom-gdb-server version="1" gdb-connect="tcp:localhost:2331" executable="D:\tools\SEGGER\JLink_V964\JLinkGDBServerCL.exe" warmup-ms="0" download-type="ALWAYS" reset-cmd="monitor reset" reset-type="AFTER_DOWNLOAD">
+      <debugger toolchainName="ARM GCC 13.3.1" />
+    </custom-gdb-server>
+    <method v="2">
+      <option name="CLION.COMPOUND.BUILD" enabled="true" />
+    </method>
+  </configuration>
+</component>
