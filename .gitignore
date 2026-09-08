@@ -1,0 +1,49 @@
+# CMake / CLion 构建目录（含本地测试产物与构建备份）
+/build/
+/cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+compile_commands.json
+build.ninja
+.ninja_deps
+.ninja_log
+
+# e2 studio 构建产物
+# CMakeLists.txt 的 FSP_MEMORY_REGIONS 默认依赖此文件，必须保留。
+/project/e2studio/Debug/*
+!/project/e2studio/Debug/memory_regions.ld
+/project/e2studio/Release/
+
+# 编译中间文件和调试产物；不统一忽略 .a / .lib / .bin，避免屏蔽依赖库或资源。
+*.o
+*.obj
+*.o.in
+*.d
+*.elf
+*.elf.in
+*.map
+*.srec
+*.sbd
+*.su
+*.gcda
+*.gcno
+*.gcov
+
+# IDE 本地状态和索引缓存
+# 保留 e2 studio 的 .project、.cproject、.settings、.launch 及 FSP 配置与生成源码。
+/.idea/
+.metadata/
+.cache/
+.clangd/
+CMakeUserPresets.json
+
+# 编辑器临时文件与操作系统缓存
+*.tmp
+*.swp
+*.swo
+*~
+Thumbs.db
+Desktop.ini
+.DS_Store
